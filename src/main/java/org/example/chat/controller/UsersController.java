@@ -3,6 +3,7 @@ package org.example.chat.controller;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.example.chat.config.JwtRequestFilter;
 import org.example.chat.model.User;
 import org.example.chat.service.MessageService;
 import org.example.chat.service.UserService;
@@ -25,6 +26,9 @@ public class UsersController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    JwtRequestFilter jwtRequestFilter;
+
     @Value("${spring.datasource.jwtKey}")
     private String SECRET_KEY;
 
@@ -39,7 +43,7 @@ public class UsersController {
         try {
             User authenticatedUser  = userService.authenticate(loginingUser .getUsername(), loginingUser .getPassword());
             if (authenticatedUser  != null) {
-                String token = generateToken(authenticatedUser ); // Генерация токена
+                String token = jwtRequestFilter.generateToken(authenticatedUser ); // Генерация токена
                 responseMap.put("token", token);
                 responseMap.put("username", authenticatedUser .getUsername());
 
@@ -96,13 +100,7 @@ public class UsersController {
         return "redirect:/api/login";
     }
 
-    private String generateToken(User user) {
-        return Jwts.builder()
-                .setSubject(String.valueOf(user.getId())) // Используем ID пользователя
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                .compact();
-    }
+
 
     private boolean validateToken(String token) {
         try {
@@ -112,7 +110,8 @@ public class UsersController {
                     .getBody();
             Long userId = Long.valueOf(claims.getSubject()); // Извлекаем ID пользователя
             Date expirationDate = claims.getExpiration();
-            return expirationDate != null && !expirationDate.before(new Date()) && userId != null;
+            String username = claims.get("username",String.class);
+            return expirationDate != null && !expirationDate.before(new Date()) && userId != null && username != null;
         } catch (Exception e) {
             System.out.println("Ошибка валидации токена: " + e.getMessage()); // Логируем ошибку валидации
             return false;

@@ -2,6 +2,7 @@ package org.example.chat.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -11,15 +12,20 @@ import org.example.chat.model.User;
 import org.example.chat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+
     @Autowired
     private UserService userService;
 
@@ -31,6 +37,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
         String path = request.getRequestURI();
+        System.out.println("authorizationHeader:" + authorizationHeader);
 
         if (path.equals("/login.html") || path.equals("/login")) {
             chain.doFilter(request, response);
@@ -47,7 +54,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 jwt = cookieToken.replace("Bearer ", "");
             }
         }
-
+        System.out.println("JWT:" + jwt);
         if (jwt != null) {
             try {
                 Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(jwt).getBody();
@@ -69,7 +76,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 return;
             }
         }
-
         chain.doFilter(request, response);
     }
 
@@ -83,4 +89,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
         return null;
     }
+    public String generateToken(User user) {
+        return Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .claim("username",user.getUsername())
+                .setExpiration(new Date(System.currentTimeMillis() + 8640000))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
+
 }

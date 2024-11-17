@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Отключение CSRF
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Настройка CORS
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login", "/login", "/public/**", "/favicon.ico", "/api/register").permitAll()
+                        .requestMatchers("/api/login", "/login", "/public/**", "/favicon.ico", "/api/register","/api/success","/api/chat").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(handling -> handling
@@ -42,7 +42,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("http://localhost:8080")); // Укажите ваш фронтенд
+        configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
 

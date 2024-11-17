@@ -67,7 +67,6 @@
                 .then(response => {
                     if (response.ok) {
                         document.getElementById('messageInput').value = '';
-                        loadMessages();
                     } else {
                         console.error('Ошибка при отправке сообщения:', response.status);
                     }
@@ -101,6 +100,10 @@
                 .catch(error => console.error('Ошибка при загрузке сообщений:', error));
         }
 
+        // Загрузка сообщений каждые 5 секунд
+        setInterval(loadMessages, 1000);
+
+        // Первоначальная загрузка сообщений
         loadMessages();
     });
 </script>
