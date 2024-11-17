@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+<h1>Авторизация</h1>
+<form id="loginForm">
+    <label for="username">Имя пользователя:</label>
+    <input type="text" id="username" name="username" required><br><br>
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" name="password" required><br><br>
+    <button type="submit">Войти</button>
+    <a href="/api/register">зарегаться</a>
+</form>
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Предотвращаем стандартное поведение формы
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Выполняем запрос на сервер для аутентификации
+        fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({username, password})
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Ожидаем JSON ответ
+                } else {
+                    return response.json().then(err => {
+                        throw new Error(err.error || 'Ошибка авторизации'); // Обработка ошибки
+                    });
+                }
+            })
+            .then(data => {
+                console.log('Токен:', data.token); // Выводим токен в консоль
+                localStorage.setItem('token', data.token); // Сохраняем токен как строку
+                localStorage.setItem('username', data.username); // Сохраняем имя пользователя
+                window.location.href = '/api/success?token=' + data.token; // Перенаправляем на страницу успеха
+            })
+            .catch(error => {
+                alert(error.message);
+            });
+    });
+</script>
+</body>
+</html>

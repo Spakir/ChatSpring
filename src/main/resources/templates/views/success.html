@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Успех</title>
+</head>
+<body>
+<h1>Успешная авторизация</h1>
+<div id="data">
+    <p>Добро пожаловать, <span th:text="${username}">пользователь</span>!</p>
+    <a href="/api/chat">перейти в чатик</a>
+</div>
+<script>
+    // Извлекаем токен из localStorage
+    const token = localStorage.getItem('token');
+    console.log("Извлеченный токен:", token); // Выводим извлеченный токен
+    if (!token) {
+        alert('Токен не найден. Пожалуйста, авторизуйтесь снова.');
+        window.location.href = 'login.html'; // Перенаправляем на страницу авторизации
+    } else {
+        console.log('Токен найден:', token); // Здесь вы можете добавить дополнительную логику, если это необходимо
+    }
+</script>
+</body>
+</html>
