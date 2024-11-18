@@ -2,10 +2,9 @@ package org.example.chat.controller;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.example.chat.config.JwtRequestFilter;
 import org.example.chat.model.User;
-import org.example.chat.service.MessageService;
 import org.example.chat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +20,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/api")
+@Slf4j
 public class UsersController {
 
     @Autowired
@@ -34,6 +34,7 @@ public class UsersController {
 
     @GetMapping("/login")
     public String showLoginPage() {
+        System.out.println("ЭТ ПЕНИС");
         return "/login"; // Возвращаем имя HTML-шаблона
     }
 
@@ -111,6 +112,9 @@ public class UsersController {
             Long userId = Long.valueOf(claims.getSubject()); // Извлекаем ID пользователя
             Date expirationDate = claims.getExpiration();
             String username = claims.get("username",String.class);
+
+            log.info(String.format("User id:%d \nUsername: %s",userId,username));
+
             return expirationDate != null && !expirationDate.before(new Date()) && userId != null && username != null;
         } catch (Exception e) {
             System.out.println("Ошибка валидации токена: " + e.getMessage()); // Логируем ошибку валидации
