@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+
+    container_name: "spring-chat"
+
+    environment:
+      POSTGRES_USER: danmih
+      POSTGRES_PASSWORD: aue123
+      POSTGRES_DB: spring-chat_db
+
+    ports:
+      - "5432:5432"

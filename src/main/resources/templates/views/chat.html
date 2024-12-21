@@ -11,6 +11,7 @@
             padding: 20px;
             background-color: #f4f4f4;
         }
+
         #messages {
             border: 1px solid #ccc;
             padding: 10px;
@@ -19,14 +20,17 @@
             background-color: #fff;
             margin-bottom: 10px;
         }
+
         #messageForm {
             display: flex;
         }
+
         #messageInput {
             flex: 1;
             padding: 10px;
             font-size: 16px;
         }
+
         button {
             padding: 10px 15px;
             font-size: 16px;
@@ -42,15 +46,9 @@
 </form>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const token = localStorage.getItem('token');
         const username = localStorage.getItem('username');
 
-        if (!token) {
-            alert('Токен не найден. Пожалуйста, авторизуйтесь снова.');
-            window.location.href = 'login.html';
-        } else {
-            document.getElementById('welcomeMessage').textContent = `Добро пожаловать, ${username}!`;
-        }
+        document.getElementById('welcomeMessage').textContent = `Добро пожаловать, ${username}!`;
 
         document.getElementById('messageForm').addEventListener('submit', function (event) {
             event.preventDefault();
@@ -62,7 +60,7 @@
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token
                 },
-                body: JSON.stringify({ username, message })
+                body: JSON.stringify({username, message})
             })
                 .then(response => {
                     if (response.ok) {
