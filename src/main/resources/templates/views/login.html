@@ -37,6 +37,7 @@
         })
             .then(response => {
                 if (response.ok) {
+                    localStorage.setItem('username', JSON.stringify(username));
                     window.location.href = '/api/success'; // Перенаправление на страницу успеха
                 } else {
                     alert('Неверные учетные данные');
